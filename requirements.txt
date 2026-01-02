@@ -1,1 +1,2 @@
--r backend/requirements.txt
+# Intentionally left minimal.
+# The real Python dependencies for the optional backend live in backend/requirements.txt
