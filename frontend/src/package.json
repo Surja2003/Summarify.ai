@@ -1,0 +1,57 @@
+{
+  "name": "cortexcoders-ai-summarizer",
+  "version": "1.0.0",
+  "description": "AI-powered document summarization and analysis platform",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc && vite build",
+    "preview": "vite preview",
+    "type-check": "tsc --noEmit",
+    "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
+    "format": "prettier --write \"src/**/*.{ts,tsx,css,md}\""
+  },
+  "dependencies": {
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "lucide-react": "^0.294.0"
+  },
+  "devDependencies": {
+    "@types/react": "^18.2.43",
+    "@types/react-dom": "^18.2.17",
+    "@typescript-eslint/eslint-plugin": "^6.14.0",
+    "@typescript-eslint/parser": "^6.14.0",
+    "@vitejs/plugin-react": "^4.2.1",
+    "autoprefixer": "^10.4.16",
+    "eslint": "^8.55.0",
+    "eslint-plugin-react-hooks": "^4.6.0",
+    "eslint-plugin-react-refresh": "^0.4.5",
+    "postcss": "^8.4.32",
+    "prettier": "^3.1.1",
+    "tailwindcss": "^4.0.0",
+    "typescript": "^5.2.2",
+    "vite": "^5.0.8"
+  },
+  "keywords": [
+    "ai",
+    "nlp",
+    "summarization",
+    "document-analysis",
+    "text-processing",
+    "tfidf",
+    "keyword-extraction",
+    "react",
+    "typescript",
+    "tailwindcss"
+  ],
+  "author": "Team CortexCoders",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/cortexcoders/ai-summarizer.git"
+  },
+  "bugs": {
+    "url": "https://github.com/cortexcoders/ai-summarizer/issues"
+  },
+  "homepage": "https://github.com/cortexcoders/ai-summarizer#readme"
+}
