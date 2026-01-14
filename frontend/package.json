@@ -58,7 +58,7 @@
             "vite": "6.3.5"
       },
       "scripts": {
-            "dev": "vite",
-            "build": "vite build"
+            "dev": "node ./node_modules/vite/bin/vite.js",
+            "build": "node ./node_modules/vite/bin/vite.js build"
       }
 }
