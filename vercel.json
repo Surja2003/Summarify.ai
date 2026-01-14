@@ -15,12 +15,15 @@
   ],
   "routes": [
     {
-      "src": "/api/chat",
-      "dest": "api/chat.py"
+      "src": "^/api/chat/?$",
+      "dest": "/api/chat.py"
+    },
+    {
+      "handle": "filesystem"
     },
     {
       "src": "/(.*)",
-      "dest": "frontend/build/$1"
+      "dest": "/index.html"
     }
   ]
 }
