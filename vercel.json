@@ -2,6 +2,10 @@
   "version": 2,
   "builds": [
     {
+      "src": "api/chat.py",
+      "use": "@vercel/python"
+    },
+    {
       "src": "frontend/package.json",
       "use": "@vercel/static-build",
       "config": {
@@ -10,6 +14,10 @@
     }
   ],
   "routes": [
+    {
+      "src": "/api/chat",
+      "dest": "api/chat.py"
+    },
     {
       "src": "/(.*)",
       "dest": "frontend/build/$1"

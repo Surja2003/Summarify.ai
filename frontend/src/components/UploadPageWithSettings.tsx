@@ -210,29 +210,47 @@ export function UploadPageWithSettings({ settings, onSettingsUpdate, onSummarize
         animate={{ opacity: 1, y: 0 }}
         className="bg-white/80 dark:bg-gray-900 rounded-2xl border border-gray-200 dark:border-gray-800 overflow-hidden"
       >
-        <button
-          onClick={() => setShowSettings(!showSettings)}
-          className="w-full px-6 py-4 flex items-center justify-between hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors"
-          aria-label={showSettings ? "Collapse settings" : "Expand settings"}
-          aria-expanded={showSettings}
-        >
-          <div className="flex items-center gap-3">
-            <Sparkles className="w-6 h-6 text-blue-500" />
-            <div className="text-left">
-              <h2 className="text-xl text-gray-900 dark:text-white">
-                Summarization Settings
-              </h2>
-              <p className="text-sm text-gray-600 dark:text-gray-400">
-                Customize how your documents are analyzed
-              </p>
+        {showSettings ? (
+          <button
+            onClick={() => setShowSettings(false)}
+            className="w-full px-6 py-4 flex items-center justify-between hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors"
+            aria-label="Collapse settings"
+            aria-expanded="true"
+          >
+            <div className="flex items-center gap-3">
+              <Sparkles className="w-6 h-6 text-blue-500" />
+              <div className="text-left">
+                <h2 className="text-xl text-gray-900 dark:text-white">
+                  Summarization Settings
+                </h2>
+                <p className="text-sm text-gray-600 dark:text-gray-400">
+                  Customize how your documents are analyzed
+                </p>
+              </div>
             </div>
-          </div>
-          {showSettings ? (
             <ChevronUp className="w-5 h-5 text-gray-500" />
-          ) : (
+          </button>
+        ) : (
+          <button
+            onClick={() => setShowSettings(true)}
+            className="w-full px-6 py-4 flex items-center justify-between hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors"
+            aria-label="Expand settings"
+            aria-expanded="false"
+          >
+            <div className="flex items-center gap-3">
+              <Sparkles className="w-6 h-6 text-blue-500" />
+              <div className="text-left">
+                <h2 className="text-xl text-gray-900 dark:text-white">
+                  Summarization Settings
+                </h2>
+                <p className="text-sm text-gray-600 dark:text-gray-400">
+                  Customize how your documents are analyzed
+                </p>
+              </div>
+            </div>
             <ChevronDown className="w-5 h-5 text-gray-500" />
-          )}
-        </button>
+          </button>
+        )}
 
         <AnimatePresence>
           {showSettings && (
@@ -375,23 +393,27 @@ export function UploadPageWithSettings({ settings, onSettingsUpdate, onSummarize
                       Generate more natural, human-like summaries
                     </p>
                   </div>
-                  <button
-                    onClick={() => onSettingsUpdate({ ...settings, useAbstractive: !settings.useAbstractive })}
-                    className={`relative inline-flex h-8 w-14 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors ${
-                      settings.useAbstractive
-                        ? 'bg-gradient-to-r from-blue-500 to-purple-500 dark:bg-gray-800'
-                        : 'bg-gray-300 dark:bg-gray-800'
-                    }`}
-                    role="switch"
-                    aria-checked={settings.useAbstractive}
-                    aria-label="Toggle abstractive summarization"
-                  >
-                    <span
-                      className={`inline-block h-7 w-7 transform rounded-full bg-white shadow transition ${
-                        settings.useAbstractive ? 'translate-x-6' : 'translate-x-0'
-                      }`}
-                    />
-                  </button>
+                  {settings.useAbstractive ? (
+                    <button
+                      onClick={() => onSettingsUpdate({ ...settings, useAbstractive: false })}
+                      className="relative inline-flex h-8 w-14 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors bg-gradient-to-r from-blue-500 to-purple-500 dark:bg-gray-800"
+                      role="switch"
+                      aria-checked="true"
+                      aria-label="Toggle abstractive summarization"
+                    >
+                      <span className="inline-block h-7 w-7 transform rounded-full bg-white shadow transition translate-x-6" />
+                    </button>
+                  ) : (
+                    <button
+                      onClick={() => onSettingsUpdate({ ...settings, useAbstractive: true })}
+                      className="relative inline-flex h-8 w-14 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors bg-gray-300 dark:bg-gray-800"
+                      role="switch"
+                      aria-checked="false"
+                      aria-label="Toggle abstractive summarization"
+                    >
+                      <span className="inline-block h-7 w-7 transform rounded-full bg-white shadow transition translate-x-0" />
+                    </button>
+                  )}
                 </div>
               </div>
             </motion.div>

@@ -11,6 +11,27 @@ export function KeywordsPanel({ keywords }: KeywordsPanelProps) {
   const sortedKeywords = [...keywords].sort((a, b) => b.score - a.score);
   const maxScore = sortedKeywords[0]?.score || 1;
 
+  const getRatio = (score: number) => {
+    if (!maxScore) return 0;
+    const ratio = score / maxScore;
+    return Math.max(0, Math.min(1, ratio));
+  };
+
+  const getBarClass = (score: number) => {
+    const pctBucket = Math.round(getRatio(score) * 10) * 10; // 0..100 step 10
+    return `kw-bar-${pctBucket}`;
+  };
+
+  const getTagSizeClass = (score: number) => {
+    const bucket = Math.max(1, Math.min(6, Math.ceil(getRatio(score) * 6)));
+    return `kw-tag-size-${bucket}`;
+  };
+
+  const getTagOpacityClass = (score: number) => {
+    const bucket = Math.max(1, Math.min(5, Math.ceil(getRatio(score) * 5)));
+    return `kw-tag-opacity-${bucket}`;
+  };
+
   return (
     <div className="space-y-6">
       {/* Header */}
@@ -41,8 +62,7 @@ export function KeywordsPanel({ keywords }: KeywordsPanelProps) {
             <div className="flex items-center gap-2">
               <div className="flex-1 h-2 bg-gray-200 dark:bg-gray-900 rounded-full overflow-hidden">
                 <div
-                  className="h-full bg-gradient-to-r from-blue-500 to-purple-500 dark:bg-gray-800"
-                  style={{ width: `${(keyword.score / maxScore) * 100}%` }}
+                  className={`h-full bg-gradient-to-r from-blue-500 to-purple-500 dark:bg-gray-800 ${getBarClass(keyword.score)}`}
                 />
               </div>
               <span className="text-xs text-gray-600 dark:text-gray-400">
@@ -77,8 +97,7 @@ export function KeywordsPanel({ keywords }: KeywordsPanelProps) {
               <div className="flex items-center gap-3">
                 <div className="w-24 h-2 bg-gray-200 dark:bg-gray-900 rounded-full overflow-hidden">
                   <div
-                    className="h-full bg-gradient-to-r from-blue-500 to-purple-500 dark:bg-gray-800"
-                    style={{ width: `${(keyword.score / maxScore) * 100}%` }}
+                    className={`h-full bg-gradient-to-r from-blue-500 to-purple-500 dark:bg-gray-800 ${getBarClass(keyword.score)}`}
                   />
                 </div>
                 <span className="text-sm text-gray-600 dark:text-gray-400 w-12 text-right">
@@ -105,11 +124,7 @@ export function KeywordsPanel({ keywords }: KeywordsPanelProps) {
             return (
               <span
                 key={index}
-                className="px-3 py-1 bg-gradient-to-r from-blue-500 to-purple-500 dark:bg-gray-800 text-white rounded-full transition-transform hover:scale-110"
-                style={{
-                  fontSize: `${size}rem`,
-                  opacity: opacity
-                }}
+                className={`px-3 py-1 bg-gradient-to-r from-blue-500 to-purple-500 dark:bg-gray-800 text-white rounded-full transition-transform hover:scale-110 ${getTagSizeClass(keyword.score)} ${getTagOpacityClass(keyword.score)}`}
               >
                 {keyword.word}
               </span>

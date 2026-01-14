@@ -81,6 +81,28 @@ export function FloatingChatbot({ document, summary, documents }: FloatingChatbo
     return `I've analyzed your document(s). Could you please rephrase your question or ask about specific topics mentioned in the summary? For example, you can ask me to explain key points, provide more details, or compare documents.`;
   };
 
+  const callChatApi = async (question: string, history: ChatMessage[], allText: string) => {
+    const contextText = summary?.trim()
+      ? `Summary:\n${summary}\n\nDocument(s):\n${allText}`
+      : allText;
+
+    const response = await fetch('/api/chat', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        message: question,
+        documentText: contextText,
+        conversationHistory: history.map(m => ({ role: m.role, content: m.content }))
+      })
+    });
+
+    if (!response.ok) {
+      throw new Error(`Chat API error: ${response.status}`);
+    }
+
+    return (await response.json()) as { role: 'assistant'; content: string; timestamp: string };
+  };
+
   const handleSend = async () => {
     if (!input.trim()) return;
 
@@ -90,22 +112,35 @@ export function FloatingChatbot({ document, summary, documents }: FloatingChatbo
       timestamp: new Date().toISOString()
     };
 
-    setMessages(prev => [...prev, userMessage]);
+    const nextMessages = [...messages, userMessage];
+    setMessages(nextMessages);
     setInput('');
     setIsTyping(true);
 
-    // Simulate AI response delay
-    setTimeout(() => {
-      const response = generateResponse(input);
+    const allText = documents 
+      ? documents.map(d => d.text).join('\n\n')
+      : document;
+
+    try {
+      const apiResponse = await callChatApi(userMessage.content, nextMessages, allText);
+      const assistantMessage: ChatMessage = {
+        role: 'assistant',
+        content: apiResponse.content,
+        timestamp: apiResponse.timestamp || new Date().toISOString()
+      };
+      setMessages(prev => [...prev, assistantMessage]);
+    } catch (e) {
+      // Fallback to local heuristic so the UI still works in dev/offline.
+      const response = generateResponse(userMessage.content);
       const assistantMessage: ChatMessage = {
         role: 'assistant',
         content: response,
         timestamp: new Date().toISOString()
       };
-
       setMessages(prev => [...prev, assistantMessage]);
+    } finally {
       setIsTyping(false);
-    }, 1000);
+    }
   };
 
   const handleKeyPress = (e: React.KeyboardEvent) => {
@@ -159,6 +194,7 @@ export function FloatingChatbot({ document, summary, documents }: FloatingChatbo
                 <button
                   onClick={() => setIsMinimized(!isMinimized)}
                   className="p-1 hover:bg-white/20 rounded transition-colors"
+                  aria-label={isMinimized ? 'Maximize chat' : 'Minimize chat'}
                 >
                   {isMinimized ? (
                     <Maximize2 className="w-4 h-4 text-white" />
@@ -169,6 +205,7 @@ export function FloatingChatbot({ document, summary, documents }: FloatingChatbo
                 <button
                   onClick={() => setIsOpen(false)}
                   className="p-1 hover:bg-white/20 rounded transition-colors"
+                  aria-label="Close chat"
                 >
                   <X className="w-4 h-4 text-white" />
                 </button>
@@ -205,9 +242,9 @@ export function FloatingChatbot({ document, summary, documents }: FloatingChatbo
                     <div className="flex justify-start">
                       <div className="bg-gray-100 dark:bg-gray-900 rounded-2xl px-4 py-3">
                         <div className="flex gap-1">
-                          <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '0ms' }}></div>
-                          <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '150ms' }}></div>
-                          <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '300ms' }}></div>
+                          <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" />
+                          <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce delay-100" />
+                          <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce delay-200" />
                         </div>
                       </div>
                     </div>
@@ -231,6 +268,7 @@ export function FloatingChatbot({ document, summary, documents }: FloatingChatbo
                       onClick={handleSend}
                       disabled={!input.trim()}
                       className="px-4 py-2 bg-gradient-to-r from-blue-500 to-purple-500 dark:bg-gray-800 text-white rounded-xl hover:shadow-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                      aria-label="Send message"
                     >
                       <Send className="w-5 h-5" />
                     </button>

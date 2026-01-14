@@ -137,6 +137,36 @@ The backend provides optional enhanced features like:
 ### Frontend Environment
 No environment variables needed - runs standalone.
 
+### ChatGPT-like Chat (Recommended)
+
+The chat UI calls a lightweight serverless endpoint at `/api/chat`.
+
+- If `OPENAI_API_KEY` is set (Vercel env var), responses use an OpenAI chat model (more ChatGPT-like).
+- If it is not set (or the API is unreachable in local dev), the UI falls back to the built-in keyword-based responses.
+
+Set these environment variables in Vercel (Project → Settings → Environment Variables):
+
+```env
+OPENAI_API_KEY=...your key...
+OPENAI_MODEL=gpt-4o-mini
+```
+
+Notes:
+- In local dev (`npm run dev`), `/api/chat` usually won’t exist unless you run via `vercel dev`; the UI will automatically fall back.
+
+### Hugging Face (Free Hosted Models)
+
+If you want a “no OpenAI key” option, you can use Hugging Face’s hosted inference API (free tier is typically rate-limited).
+
+Set these environment variables (Vercel or local backend):
+
+```env
+HUGGINGFACE_API_TOKEN=...your token...
+HUGGINGFACE_MODEL=HuggingFaceH4/zephyr-7b-beta
+```
+
+The chat endpoint will prefer `OPENAI_API_KEY` when present, otherwise it will try Hugging Face.
+
 ### Backend Environment (if using)
 Create a `.env` file in the backend directory:
 
@@ -150,6 +180,10 @@ CORS_ORIGINS=*
 
 # Cache Settings
 MAX_CACHE_SIZE=100
+
+# Optional: OpenAI-backed chat (ChatGPT-like)
+OPENAI_API_KEY=...your key...
+OPENAI_MODEL=gpt-4o-mini
 ```
 
 ## 📊 Sample API Request

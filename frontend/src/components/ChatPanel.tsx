@@ -70,6 +70,28 @@ export function ChatPanel({ document, summary }: ChatPanelProps) {
     return `I'm analyzing your question about the document. Could you please be more specific? You can ask me about the summary, main points, topics, or specific content from the document.`;
   };
 
+  const callChatApi = async (question: string, history: ChatMessage[]) => {
+    const contextText = summary?.trim()
+      ? `Summary:\n${summary}\n\nDocument:\n${document}`
+      : document;
+
+    const response = await fetch('/api/chat', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        message: question,
+        documentText: contextText,
+        conversationHistory: history.map(m => ({ role: m.role, content: m.content }))
+      })
+    });
+
+    if (!response.ok) {
+      throw new Error(`Chat API error: ${response.status}`);
+    }
+
+    return (await response.json()) as { role: 'assistant'; content: string; timestamp: string };
+  };
+
   const handleSend = async () => {
     if (!input.trim()) return;
 
@@ -79,22 +101,31 @@ export function ChatPanel({ document, summary }: ChatPanelProps) {
       timestamp: new Date().toISOString()
     };
 
-    setMessages(prev => [...prev, userMessage]);
+    const nextMessages = [...messages, userMessage];
+    setMessages(nextMessages);
     setInput('');
     setIsTyping(true);
 
-    // Simulate typing delay
-    await new Promise(resolve => setTimeout(resolve, 1000));
-
-    const response = generateResponse(input);
-    const assistantMessage: ChatMessage = {
-      role: 'assistant',
-      content: response,
-      timestamp: new Date().toISOString()
-    };
-
-    setMessages(prev => [...prev, assistantMessage]);
-    setIsTyping(false);
+    try {
+      const apiResponse = await callChatApi(userMessage.content, nextMessages);
+      const assistantMessage: ChatMessage = {
+        role: 'assistant',
+        content: apiResponse.content,
+        timestamp: apiResponse.timestamp || new Date().toISOString()
+      };
+      setMessages(prev => [...prev, assistantMessage]);
+    } catch (e) {
+      // Fallback to local heuristic so the UI still works in dev/offline.
+      const response = generateResponse(userMessage.content);
+      const assistantMessage: ChatMessage = {
+        role: 'assistant',
+        content: response,
+        timestamp: new Date().toISOString()
+      };
+      setMessages(prev => [...prev, assistantMessage]);
+    } finally {
+      setIsTyping(false);
+    }
   };
 
   const handleKeyPress = (e: React.KeyboardEvent) => {
