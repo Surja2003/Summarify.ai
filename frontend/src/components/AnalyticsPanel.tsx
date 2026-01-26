@@ -115,7 +115,7 @@ export function AnalyticsPanel({ result }: AnalyticsPanelProps) {
                   style={{ width: `${(sentence.score / maxScore) * 100}%` }}
                 />
               </div>
-              <p className="text-xs text-gray-500 dark:text-gray-500 line-clamp-1">
+              <p className="text-xs text-gray-500 dark:text-gray-400 line-clamp-1">
                 {sentence.sentence}
               </p>
             </div>

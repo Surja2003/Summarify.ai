@@ -316,7 +316,7 @@ export function MultiDocumentUpload({ onSummarize }: MultiDocumentUploadProps) {
               }`}
             >
               <div className="flex items-center gap-3 mb-2">
-                <Merge className={`w-5 h-5 ${summaryMode === 'merged' ? 'text-blue-500' : 'text-gray-500'}`} />
+                <Merge className={`w-5 h-5 ${summaryMode === 'merged' ? 'text-blue-500' : 'text-gray-500 dark:text-gray-400'}`} />
                 <span className="text-gray-900 dark:text-white">Merged Summary</span>
               </div>
               <p className="text-sm text-gray-600 dark:text-gray-400">
@@ -333,7 +333,7 @@ export function MultiDocumentUpload({ onSummarize }: MultiDocumentUploadProps) {
               }`}
             >
               <div className="flex items-center gap-3 mb-2">
-                <Layers className={`w-5 h-5 ${summaryMode === 'separate' ? 'text-blue-500' : 'text-gray-500'}`} />
+                <Layers className={`w-5 h-5 ${summaryMode === 'separate' ? 'text-blue-500' : 'text-gray-500 dark:text-gray-400'}`} />
                 <span className="text-gray-900 dark:text-white">Separate Summaries</span>
               </div>
               <p className="text-sm text-gray-600 dark:text-gray-400">

@@ -228,7 +228,7 @@ export function UploadPageWithSettings({ settings, onSettingsUpdate, onSummarize
                 </p>
               </div>
             </div>
-            <ChevronUp className="w-5 h-5 text-gray-500" />
+            <ChevronUp className="w-5 h-5 text-gray-500 dark:text-gray-400" />
           </button>
         ) : (
           <button
@@ -248,7 +248,7 @@ export function UploadPageWithSettings({ settings, onSettingsUpdate, onSummarize
                 </p>
               </div>
             </div>
-            <ChevronDown className="w-5 h-5 text-gray-500" />
+            <ChevronDown className="w-5 h-5 text-gray-500 dark:text-gray-400" />
           </button>
         )}
 
@@ -517,7 +517,7 @@ export function UploadPageWithSettings({ settings, onSettingsUpdate, onSummarize
 
                   <div className="flex items-center gap-2">
                     {file.status === 'pending' && (
-                      <span className="text-xs text-gray-500">Pending...</span>
+                      <span className="text-xs text-gray-500 dark:text-gray-400">Pending...</span>
                     )}
                     {file.status === 'processing' && (
                       <span className="text-xs text-blue-500">Processing...</span>
@@ -537,7 +537,7 @@ export function UploadPageWithSettings({ settings, onSettingsUpdate, onSummarize
                       title="Remove file"
                       aria-label={`Remove ${file.name}`}
                     >
-                      <X className="w-4 h-4 text-gray-500" />
+                      <X className="w-4 h-4 text-gray-500 dark:text-gray-400" />
                     </button>
                   </div>
                 </motion.div>

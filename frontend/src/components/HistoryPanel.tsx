@@ -13,7 +13,7 @@ export function HistoryPanel({ history, onSelect }: HistoryPanelProps) {
       <div className="max-w-4xl mx-auto">
         <div className="bg-white/80 dark:bg-gray-900 backdrop-blur-lg rounded-2xl p-12 border border-gray-200 dark:border-gray-800 text-center">
           <div className="w-20 h-20 rounded-full bg-gradient-to-br from-gray-200 to-gray-300 dark:from-gray-900 dark:to-gray-900 flex items-center justify-center mx-auto mb-4">
-            <Clock className="w-10 h-10 text-gray-400 dark:text-gray-500" />
+            <Clock className="w-10 h-10 text-gray-400 dark:text-gray-400" />
           </div>
           <h2 className="text-2xl text-gray-900 dark:text-white mb-2">
             No History Yet
@@ -91,7 +91,7 @@ export function HistoryPanel({ history, onSelect }: HistoryPanelProps) {
             </div>
 
             {/* Settings */}
-            <div className="mt-4 flex items-center gap-2 text-xs text-gray-500 dark:text-gray-500">
+            <div className="mt-4 flex items-center gap-2 text-xs text-gray-500 dark:text-gray-400">
               <Settings className="w-3 h-3" />
               <span>
                 Abstractive: {item.settings.useAbstractive ? 'On' : 'Off'}

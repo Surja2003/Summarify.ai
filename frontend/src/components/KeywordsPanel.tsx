@@ -87,7 +87,7 @@ export function KeywordsPanel({ keywords }: KeywordsPanelProps) {
               className="flex items-center justify-between py-2 border-b border-gray-200 dark:border-gray-800 last:border-0"
             >
               <div className="flex items-center gap-3">
-                <span className="text-sm text-gray-500 dark:text-gray-500 w-8">
+                <span className="text-sm text-gray-500 dark:text-gray-400 w-8">
                   #{index + 1}
                 </span>
                 <span className="text-gray-900 dark:text-white">
