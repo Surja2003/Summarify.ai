@@ -73,7 +73,7 @@ export function HomePage({ onGetStarted, darkMode, onToggleTheme }: HomePageProp
   ];
 
   return (
-    <div className="min-h-screen overflow-auto">
+    <div className="min-h-screen overflow-auto bg-gradient-to-br from-blue-50 via-white to-purple-50 dark:from-gray-950 dark:via-gray-950 dark:to-gray-900">
       {/* Sticky Header Navigation */}
       <header className="fixed top-0 left-0 right-0 z-50 bg-white/80 dark:bg-gray-900 border-b border-gray-200 dark:border-gray-800">
         <nav className="max-w-7xl mx-auto px-6 py-4">
