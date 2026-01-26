@@ -241,7 +241,7 @@ export default function App() {
   if (showHome) {
     return (
       <div className={`min-h-screen ${darkMode ? 'dark' : ''}`}>
-        <div className="min-h-screen bg-gradient-to-br from-blue-50 via-purple-50 to-pink-50 dark:bg-black transition-colors duration-300 relative">
+        <div className="min-h-screen bg-gradient-to-br from-blue-50 via-purple-50 to-pink-50 dark:from-gray-950 dark:via-gray-950 dark:to-gray-900 transition-colors duration-300 relative">
           <HomePage 
             onGetStarted={() => setShowHome(false)} 
             darkMode={darkMode}
@@ -259,7 +259,7 @@ export default function App() {
   if (!user) {
     return (
       <div className={`min-h-screen ${darkMode ? 'dark' : ''}`}>
-        <div className="min-h-screen bg-gradient-to-br from-blue-50 via-purple-50 to-pink-50 dark:bg-black transition-colors duration-300">
+        <div className="min-h-screen bg-gradient-to-br from-blue-50 via-purple-50 to-pink-50 dark:from-gray-950 dark:via-gray-950 dark:to-gray-900 transition-colors duration-300">
           <AuthPage 
             onLogin={handleLogin}
             darkMode={darkMode}
@@ -276,7 +276,7 @@ export default function App() {
   // Main app
   return (
     <div className={`min-h-screen ${darkMode ? 'dark' : ''}`}>
-      <div className="flex min-h-screen bg-gradient-to-br from-blue-50 via-purple-50 to-pink-50 dark:bg-black transition-colors duration-300">
+      <div className="flex min-h-screen bg-gradient-to-br from-blue-50 via-purple-50 to-pink-50 dark:from-gray-950 dark:via-gray-950 dark:to-gray-900 transition-colors duration-300">
         {/* Sidebar */}
         <Sidebar
           activeView={activeView}

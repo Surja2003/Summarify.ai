@@ -575,7 +575,7 @@ export function HomePage({ onGetStarted, darkMode, onToggleTheme }: HomePageProp
                 </div>
               </div>
               
-              <div className="text-sm text-gray-500 dark:text-gray-500 text-center">
+              <div className="text-sm text-gray-500 dark:text-gray-400 text-center">
                 © 2025 Summarify.ai. All rights reserved. Processing happens locally in your browser.
               </div>
             </div>
