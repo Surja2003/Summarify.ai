@@ -217,7 +217,10 @@ export function AuthPage({ onLogin, darkMode, onToggleTheme }: AuthPageProps) {
             {isLogin && (
               <div className="flex items-center justify-between text-sm">
                 <label className="flex items-center gap-2 cursor-pointer">
-                  <input type="checkbox" className="rounded border-gray-300 text-blue-500 focus:ring-blue-500" />
+                  <input
+                    type="checkbox"
+                    className="rounded border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 text-blue-500 focus:ring-blue-500"
+                  />
                   <span className="text-gray-600 dark:text-gray-400">Remember me</span>
                 </label>
                 <a href="#" className="text-blue-500 hover:text-blue-600">
