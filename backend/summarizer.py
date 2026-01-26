@@ -87,7 +87,38 @@ def clean_extracted_text(text: str) -> str:
         .replace("\t", " ")
     )
 
-    raw_lines = [ln.strip() for ln in normalized.split("\n") if ln.strip()]
+    # Scrub common academic PDF boilerplate even when it isn't separated by newlines
+    # (some extractors join a whole page into a single space-separated line).
+    scrubbed = normalized
+    scrubbed = re.sub(r"https?://doi\.org/\S+", " ", scrubbed, flags=re.IGNORECASE)
+    scrubbed = re.sub(
+        r"\b10\.\d{4,9}/[-._;()/:A-Z0-9]+\b",
+        " ",
+        scrubbed,
+        flags=re.IGNORECASE,
+    )
+    scrubbed = re.sub(
+        r"\b\d{4}/s\d{5}-\d{3}-\d{5}-\d\b",
+        " ",
+        scrubbed,
+        flags=re.IGNORECASE,
+    )
+    scrubbed = re.sub(
+        r"\bs\d{5}-\d{3}-\d{5}-\d\b",
+        " ",
+        scrubbed,
+        flags=re.IGNORECASE,
+    )
+    scrubbed = re.sub(
+        r"\bwww\.nature\.com/scientificreports\b",
+        " ",
+        scrubbed,
+        flags=re.IGNORECASE,
+    )
+    scrubbed = re.sub(r"\bscientific\s+reports\b", " ", scrubbed, flags=re.IGNORECASE)
+    scrubbed = re.sub(r"\bwww\.(?=\s|$)", " ", scrubbed, flags=re.IGNORECASE)
+
+    raw_lines = [ln.strip() for ln in scrubbed.split("\n") if ln.strip()]
 
     def fingerprint(line: str) -> str:
         s = line.lower()

@@ -119,7 +119,22 @@ function cleanExtractedText(text: string): string {
     .replace(/\r\n/g, '\n')
     .replace(/[\t ]+\n/g, '\n');
 
-  const rawLines = normalized
+  // Scrub common academic PDF boilerplate even when it isn't separated by newlines
+  // (pdf.js often joins a whole page into a single space-separated line).
+  const scrubbed = normalized
+    // DOI URLs and raw DOI tokens
+    .replace(/https?:\/\/doi\.org\/\S+/gi, ' ')
+    .replace(/\b10\.\d{4,9}\/[-._;()/:A-Z0-9]+\b/gi, ' ')
+    // Nature/Springer style article IDs (e.g. 1038/s41598-025-91446-6)
+    .replace(/\b\d{4}\/s\d{5}-\d{3}-\d{5}-\d\b/gi, ' ')
+    .replace(/\bs\d{5}-\d{3}-\d{5}-\d\b/gi, ' ')
+    // Common site headers
+    .replace(/\bwww\.nature\.com\/scientificreports\b/gi, ' ')
+    .replace(/\bscientific\s+reports\b/gi, ' ')
+    // Lone 'www.' tokens
+    .replace(/\bwww\.(?=\s|$)/gi, ' ');
+
+  const rawLines = scrubbed
     .split('\n')
     .map(l => l.trim())
     .filter(Boolean);
