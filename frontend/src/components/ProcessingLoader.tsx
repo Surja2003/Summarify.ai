@@ -17,6 +17,17 @@ export function ProcessingLoader({ step }: ProcessingLoaderProps) {
     'Complete!'
   ];
 
+  const progressWidthClasses = [
+    'w-[12.5%]',
+    'w-[25%]',
+    'w-[37.5%]',
+    'w-[50%]',
+    'w-[62.5%]',
+    'w-[75%]',
+    'w-[87.5%]',
+    'w-[100%]'
+  ];
+
   return (
     <div className="max-w-2xl mx-auto">
       <div className="bg-white/80 dark:bg-gray-900 backdrop-blur-lg rounded-2xl p-8 border border-gray-200 dark:border-gray-800">
@@ -34,10 +45,9 @@ export function ProcessingLoader({ step }: ProcessingLoaderProps) {
 
         {/* Progress Bar */}
         <div className="mb-6">
-          <div className="h-3 bg-gray-200 dark:bg-gray-900 rounded-full overflow-hidden">
+          <div className="h-3 bg-gray-200 dark:bg-gray-800 rounded-full overflow-hidden">
             <div
-              className="h-full bg-gradient-to-r from-blue-500 to-purple-500 dark:bg-gray-800 transition-all duration-300 ease-out"
-              style={{ width: `${((step + 1) / steps.length) * 100}%` }}
+              className={`h-full bg-gradient-to-r from-blue-500 to-purple-500 dark:bg-gray-800 transition-all duration-300 ease-out ${progressWidthClasses[Math.min(Math.max(step, 0), progressWidthClasses.length - 1)]}`}
             />
           </div>
           <p className="text-sm text-gray-600 dark:text-gray-400 mt-2 text-center">
@@ -57,10 +67,10 @@ export function ProcessingLoader({ step }: ProcessingLoaderProps) {
                 key={index}
                 className={`flex items-center gap-3 p-3 rounded-xl transition-all ${
                   isCurrent
-                    ? 'bg-blue-50 dark:bg-gray-900'
+                    ? 'bg-blue-50 dark:bg-gray-800'
                     : isComplete
-                    ? 'bg-green-50 dark:bg-gray-900'
-                    : 'bg-gray-50 dark:bg-gray-900/50'
+                    ? 'bg-green-50 dark:bg-gray-800'
+                    : 'bg-gray-50 dark:bg-gray-800/50'
                 }`}
               >
                 <div
@@ -86,7 +96,7 @@ export function ProcessingLoader({ step }: ProcessingLoaderProps) {
                       ? 'text-green-700 dark:text-gray-300'
                       : isCurrent
                       ? 'text-blue-700 dark:text-gray-300'
-                      : 'text-gray-500 dark:text-gray-500'
+                      : 'text-gray-500 dark:text-gray-400'
                   }`}
                 >
                   {stepText}

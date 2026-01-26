@@ -12,6 +12,16 @@ from parsers import parse_files
 from summarizer import summarize_document
 from utils import cache, get_history, export_summary, chat_with_document
 
+
+def _parse_cors_origins(value: str | None) -> list[str]:
+    if not value:
+        return ["*"]
+    raw = value.strip()
+    if raw == "*":
+        return ["*"]
+    parts = [p.strip() for p in raw.split(",")]
+    return [p for p in parts if p]
+
 app = FastAPI(
     title="Sumrify: AI Document Summarizer API",
     description="Backend API for AI-powered document summarization",
@@ -20,8 +30,8 @@ app = FastAPI(
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
-    allow_credentials=True,
+    allow_origins=_parse_cors_origins(os.getenv("CORS_ORIGINS", "*")),
+    allow_credentials=False,
     allow_methods=["*"],
     allow_headers=["*"],
 )
@@ -92,7 +102,8 @@ async def summarize(request: SummarizeRequest):
         result['fileName'] = request.fileName
         result['timestamp'] = datetime.utcnow().isoformat()
         result['settings'] = settings
-        result['originalText'] = request.text
+        # `summarize_document` may return a cleaned/normalized version.
+        result['originalText'] = result.get('originalText') or request.text
         result['metrics']['processingTime'] = round((time.time() - start_time) * 1000)  # milliseconds
         
         # Cache result
@@ -141,7 +152,7 @@ async def summarize_batch(
             merged_result['fileName'] = f"{len(files)} Documents (Merged)"
             merged_result['timestamp'] = datetime.utcnow().isoformat()
             merged_result['settings'] = settings_dict
-            merged_result['originalText'] = combined_text
+            merged_result['originalText'] = merged_result.get('originalText') or combined_text
             merged_result['documents'] = documents
             merged_result['isMerged'] = True
             merged_result['metrics']['processingTime'] = round((time.time() - start_time) * 1000)

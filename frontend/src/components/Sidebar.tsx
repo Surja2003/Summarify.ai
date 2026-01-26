@@ -44,7 +44,7 @@ export function Sidebar({ activeView, onViewChange, darkMode }: SidebarProps) {
                   className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all ${
                     isActive
                       ? 'bg-gradient-to-r from-blue-500 to-purple-500 dark:bg-gray-800 text-white shadow-lg'
-                      : 'text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-900'
+                      : 'text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800'
                   }`}
                 >
                   <Icon className="w-5 h-5" />

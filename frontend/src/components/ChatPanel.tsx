@@ -1,6 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { Send, Bot, User } from 'lucide-react';
 import { ChatMessage } from '../types';
+import { buildApiUrl } from '../utils/api';
 
 interface ChatPanelProps {
   document: string;
@@ -75,7 +76,7 @@ export function ChatPanel({ document, summary }: ChatPanelProps) {
       ? `Summary:\n${summary}\n\nDocument:\n${document}`
       : document;
 
-    const response = await fetch('/api/chat', {
+    const response = await fetch(buildApiUrl('/api/chat'), {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
@@ -184,7 +185,7 @@ export function ChatPanel({ document, summary }: ChatPanelProps) {
               >
                 <p className="whitespace-pre-wrap">{message.content}</p>
               </div>
-              <p className="text-xs text-gray-500 dark:text-gray-500 mt-1">
+              <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
                 {new Date(message.timestamp).toLocaleTimeString()}
               </p>
             </div>
@@ -240,7 +241,7 @@ export function ChatPanel({ document, summary }: ChatPanelProps) {
           <button
             key={index}
             onClick={() => setInput(question)}
-            className="px-3 py-1 text-sm bg-gray-100 dark:bg-gray-900 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-800 transition-colors"
+            className="px-3 py-1 text-sm bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"
           >
             {question}
           </button>

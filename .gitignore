@@ -24,3 +24,18 @@ tools/
 .DS_Store
 Thumbs.db
 .vscode/
+
+# Environment / Secrets (never commit)
+.env
+.env.*
+!.env.example
+
+# Common local secret files
+*.pem
+*.key
+*.p12
+*.pfx
+*.crt
+*.cer
+*.jks
+*.keystore

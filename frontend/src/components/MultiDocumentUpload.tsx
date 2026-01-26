@@ -193,6 +193,8 @@ export function MultiDocumentUpload({ onSummarize }: MultiDocumentUploadProps) {
           accept=".pdf,.docx,.txt"
           onChange={(e) => handleFiles(e.target.files)}
           className="hidden"
+          title="Upload document files"
+          aria-label="Upload multiple PDF, DOCX, or TXT files"
         />
 
         <div className="flex flex-col items-center gap-4">
@@ -207,7 +209,7 @@ export function MultiDocumentUpload({ onSummarize }: MultiDocumentUploadProps) {
             <p className="text-gray-600 dark:text-gray-400 mb-4">
               Drag & drop files here or click to browse
             </p>
-            <p className="text-sm text-gray-500 dark:text-gray-500">
+            <p className="text-sm text-gray-500 dark:text-gray-400">
               Supports PDF, DOCX, and TXT files (up to 10MB each)
             </p>
           </div>
@@ -249,9 +251,9 @@ export function MultiDocumentUpload({ onSummarize }: MultiDocumentUploadProps) {
                   initial={{ opacity: 0, x: -20 }}
                   animate={{ opacity: 1, x: 0 }}
                   exit={{ opacity: 0, x: 20 }}
-                  className="flex items-center gap-3 p-3 bg-gray-50 dark:bg-gray-900/50 rounded-xl"
+                  className="flex items-center gap-3 p-3 bg-gray-50 dark:bg-gray-800/50 rounded-xl"
                 >
-                  <div className="w-10 h-10 rounded-lg bg-blue-100 dark:bg-gray-900 flex items-center justify-center flex-shrink-0">
+                  <div className="w-10 h-10 rounded-lg bg-blue-100 dark:bg-gray-800 flex items-center justify-center flex-shrink-0">
                     <FileText className="w-5 h-5 text-blue-600 dark:text-gray-300" />
                   </div>
 
@@ -266,7 +268,7 @@ export function MultiDocumentUpload({ onSummarize }: MultiDocumentUploadProps) {
 
                   <div className="flex items-center gap-2">
                     {file.status === 'pending' && (
-                      <span className="text-xs text-gray-500">Pending...</span>
+                      <span className="text-xs text-gray-500 dark:text-gray-400">Pending...</span>
                     )}
                     {file.status === 'processing' && (
                       <span className="text-xs text-blue-500">Processing...</span>
@@ -281,8 +283,10 @@ export function MultiDocumentUpload({ onSummarize }: MultiDocumentUploadProps) {
                     <button
                       onClick={() => removeFile(file.id)}
                       className="p-1 hover:bg-gray-200 dark:hover:bg-gray-800 rounded transition-colors"
+                      aria-label={`Remove ${file.name}`}
+                      title={`Remove ${file.name}`}
                     >
-                      <X className="w-4 h-4 text-gray-500" />
+                      <X className="w-4 h-4 text-gray-500 dark:text-gray-400" />
                     </button>
                   </div>
                 </motion.div>

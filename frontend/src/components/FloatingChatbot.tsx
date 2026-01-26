@@ -2,6 +2,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import { MessageSquare, Send, X, Minimize2, Maximize2, Sparkles } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { ChatMessage } from '../types';
+import { buildApiUrl } from '../utils/api';
 
 interface FloatingChatbotProps {
   document: string;
@@ -86,7 +87,7 @@ export function FloatingChatbot({ document, summary, documents }: FloatingChatbo
       ? `Summary:\n${summary}\n\nDocument(s):\n${allText}`
       : allText;
 
-    const response = await fetch('/api/chat', {
+    const response = await fetch(buildApiUrl('/api/chat'), {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({

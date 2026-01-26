@@ -279,7 +279,7 @@ export function UploadPageWithSettings({ settings, onSettingsUpdate, onSummarize
                         onClick={() => onSettingsUpdate({ ...settings, speedMode: mode.id as any })}
                         className={`p-3 rounded-xl border-2 transition-all ${
                           settings.speedMode === mode.id
-                            ? 'border-blue-500 bg-blue-50 dark:bg-gray-900'
+                            ? 'border-blue-500 bg-blue-50 dark:bg-gray-800'
                             : 'border-gray-200 dark:border-gray-800 hover:border-gray-300'
                         }`}
                       >
@@ -310,7 +310,7 @@ export function UploadPageWithSettings({ settings, onSettingsUpdate, onSummarize
                           onClick={() => onSettingsUpdate({ ...settings, domain: domain.id as any })}
                           className={`p-3 rounded-xl border-2 transition-all ${
                             settings.domain === domain.id
-                              ? 'border-purple-500 bg-purple-50 dark:bg-gray-900'
+                              ? 'border-purple-500 bg-purple-50 dark:bg-gray-800'
                               : 'border-gray-200 dark:border-gray-800 hover:border-gray-300'
                           }`}
                         >
@@ -363,7 +363,7 @@ export function UploadPageWithSettings({ settings, onSettingsUpdate, onSummarize
                         onClick={() => onSettingsUpdate({ ...settings, summaryMode: 'merged' })}
                         className={`p-3 rounded-xl border-2 transition-all ${
                           settings.summaryMode === 'merged'
-                            ? 'border-green-500 bg-green-50 dark:bg-gray-900'
+                            ? 'border-green-500 bg-green-50 dark:bg-gray-800'
                             : 'border-gray-200 dark:border-gray-800 hover:border-gray-300'
                         }`}
                       >
@@ -374,7 +374,7 @@ export function UploadPageWithSettings({ settings, onSettingsUpdate, onSummarize
                         onClick={() => onSettingsUpdate({ ...settings, summaryMode: 'separate' })}
                         className={`p-3 rounded-xl border-2 transition-all ${
                           settings.summaryMode === 'separate'
-                            ? 'border-green-500 bg-green-50 dark:bg-gray-900'
+                            ? 'border-green-500 bg-green-50 dark:bg-gray-800'
                             : 'border-gray-200 dark:border-gray-800 hover:border-gray-300'
                         }`}
                       >
@@ -386,7 +386,7 @@ export function UploadPageWithSettings({ settings, onSettingsUpdate, onSummarize
                 </div>
 
                 {/* Abstractive Mode Toggle */}
-                <div className="flex items-center justify-between p-4 bg-blue-50 dark:bg-gray-900 rounded-xl border border-blue-200 dark:border-gray-800">
+                <div className="flex items-center justify-between p-4 bg-blue-50 dark:bg-gray-800 rounded-xl border border-blue-200 dark:border-gray-800">
                   <div>
                     <h4 className="text-gray-900 dark:text-white mb-1">Abstractive Summarization</h4>
                     <p className="text-sm text-gray-600 dark:text-gray-400">
@@ -431,7 +431,7 @@ export function UploadPageWithSettings({ settings, onSettingsUpdate, onSummarize
         onDragLeave={handleDragLeave}
         className={`relative border-2 border-dashed rounded-2xl p-12 text-center transition-all ${
           isDragging
-            ? 'border-blue-500 bg-blue-50 dark:bg-gray-900'
+            ? 'border-blue-500 bg-blue-50 dark:bg-gray-800'
             : 'border-gray-300 dark:border-gray-600 hover:border-gray-400 dark:hover:border-gray-500'
         }`}
       >
@@ -458,7 +458,7 @@ export function UploadPageWithSettings({ settings, onSettingsUpdate, onSummarize
             <p className="text-gray-600 dark:text-gray-400 mb-4">
               Drag & drop files here or click to browse
             </p>
-            <p className="text-sm text-gray-500 dark:text-gray-500">
+            <p className="text-sm text-gray-500 dark:text-gray-400">
               Supports PDF, DOCX, and TXT • Multiple files supported
             </p>
           </div>
@@ -500,9 +500,9 @@ export function UploadPageWithSettings({ settings, onSettingsUpdate, onSummarize
                   initial={{ opacity: 0, x: -20 }}
                   animate={{ opacity: 1, x: 0 }}
                   exit={{ opacity: 0, x: 20 }}
-                  className="flex items-center gap-3 p-3 bg-gray-50 dark:bg-gray-900 rounded-xl"
+                  className="flex items-center gap-3 p-3 bg-gray-50 dark:bg-gray-800 rounded-xl"
                 >
-                  <div className="w-10 h-10 rounded-lg bg-blue-100 dark:bg-gray-900 flex items-center justify-center flex-shrink-0">
+                  <div className="w-10 h-10 rounded-lg bg-blue-100 dark:bg-gray-800 flex items-center justify-center flex-shrink-0">
                     <FileText className="w-5 h-5 text-blue-600 dark:text-gray-300" />
                   </div>
 

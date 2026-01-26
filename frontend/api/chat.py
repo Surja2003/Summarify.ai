@@ -136,6 +136,7 @@ def _chat_impl(req: ChatRequest):
             {
                 "role": "assistant",
                 "content": "I can help, but I don’t have any document text yet. Upload a document and then ask your question.",
+                "provider": "local",
                 "timestamp": datetime.utcnow().isoformat(),
             }
         )
@@ -176,6 +177,7 @@ def _chat_impl(req: ChatRequest):
                         {
                             "role": "assistant",
                             "content": hf_text,
+                            "provider": "huggingface",
                             "timestamp": datetime.utcnow().isoformat(),
                         }
                     )
@@ -186,6 +188,7 @@ def _chat_impl(req: ChatRequest):
             {
                 "role": "assistant",
                 "content": _fallback_answer(message, document_text),
+                "provider": "local",
                 "timestamp": datetime.utcnow().isoformat(),
             }
         )
@@ -226,6 +229,8 @@ def _chat_impl(req: ChatRequest):
             {
                 "role": "assistant",
                 "content": content,
+                "provider": "openai",
+                "model": model,
                 "timestamp": datetime.utcnow().isoformat(),
             }
         )
@@ -234,6 +239,7 @@ def _chat_impl(req: ChatRequest):
             {
                 "role": "assistant",
                 "content": _fallback_answer(message, document_text),
+                "provider": "local",
                 "timestamp": datetime.utcnow().isoformat(),
                 "error": str(e)[:300],
             },

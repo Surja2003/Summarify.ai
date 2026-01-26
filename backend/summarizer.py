@@ -3,6 +3,7 @@ from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
 from typing import List, Dict, Any
 import re
+from collections import Counter
 import warnings
 warnings.filterwarnings('ignore')
 
@@ -74,6 +75,74 @@ def split_sentences(text: str) -> List[str]:
     """Split text into sentences."""
     sentences = re.split(r'(?<=[.!?])\s+', text)
     return [s.strip() for s in sentences if s.strip() and len(s.strip()) > 20]
+
+def clean_extracted_text(text: str) -> str:
+    """Remove common PDF extraction artifacts (headers/footers/boilerplate) and collapse duplicates."""
+    if not text:
+        return ""
+
+    normalized = (
+        text.replace("\u00a0", " ")
+        .replace("\r\n", "\n")
+        .replace("\t", " ")
+    )
+
+    raw_lines = [ln.strip() for ln in normalized.split("\n") if ln.strip()]
+
+    def fingerprint(line: str) -> str:
+        s = line.lower()
+        s = re.sub(r"https?://\S+", " ", s)
+        s = re.sub(r"\b\d+\b", " ", s)
+        s = re.sub(r"[^a-z0-9\s]", " ", s)
+        s = re.sub(r"\s+", " ", s).strip()
+        return s
+
+    keys = [fingerprint(ln) for ln in raw_lines]
+    counts = Counter(k for k in keys if k)
+
+    def is_likely_header_footer(line: str, key: str, count: int) -> bool:
+        lower = line.lower()
+
+        # Very frequently repeated short-ish lines are almost always headers/footers.
+        if count >= 3 and len(key) < 90:
+            return True
+
+        boilerplate_hit = re.search(
+            r"\bhttps?://doi\b|\bdoi\b|discover oncology|springer|open access|copyright|©|received:|accepted:|issn\b|\bvol\.?\b|\btable\s+\d+\b|\bfigure\s+\d+\b",
+            lower,
+        )
+        if boilerplate_hit and (count >= 2 or len(key) < 140):
+            return True
+
+        # Page-number-like / digit-heavy artifacts.
+        compact = re.sub(r"\s+", "", line)
+        if re.fullmatch(r"\(?\d{8,}\)?", compact):
+            return True
+
+        # Lines that are mostly digits/punct after cleaning.
+        alpha_count = len(re.findall(r"[a-z]", lower))
+        if alpha_count == 0 and len(line) < 80:
+            return True
+
+        return False
+
+    cleaned_lines: List[str] = []
+    last_key = ""
+    for line, key in zip(raw_lines, keys):
+        if not key:
+            continue
+        count = counts.get(key, 0)
+        if is_likely_header_footer(line, key, count):
+            continue
+        if key == last_key:
+            continue
+        cleaned_lines.append(line)
+        last_key = key
+
+    cleaned = "\n".join(cleaned_lines)
+    cleaned = re.sub(r"\n{3,}", "\n\n", cleaned)
+    cleaned = re.sub(r"[ ]{2,}", " ", cleaned)
+    return cleaned.strip()
 
 def extract_keywords(text: str, top_n: int = 20) -> List[Dict[str, Any]]:
     """
@@ -305,8 +374,10 @@ def summarize_document(
     Perform extractive (and optionally abstractive) summarization.
     Returns a result compatible with frontend SummarizationResult type.
     """
+    cleaned_text = clean_extracted_text(text)
+
     # 1. Split into sentences
-    sentences = split_sentences(text)
+    sentences = split_sentences(cleaned_text)
     n_sent = len(sentences)
     
     if n_sent == 0:
@@ -405,7 +476,7 @@ def summarize_document(
     # 8. Extract keywords - scale with highlights and document complexity
     # More highlights = more topics covered = more keywords needed
     num_highlights = len(highlights)
-    unique_words = len(set(text.lower().split()))
+    unique_words = len(set(cleaned_text.lower().split()))
     document_complexity = min(1.0, unique_words / 1000)  # 0-1 scale
     
     # Base: 1 keyword per 2 highlights, scaled by complexity
@@ -413,10 +484,10 @@ def summarize_document(
     dynamic_keyword_count = int(base_keywords * (1.0 + document_complexity * 0.8))
     dynamic_keyword_count = max(8, min(60, dynamic_keyword_count))  # Bounds: 8-60
     
-    keywords = extract_keywords(text, top_n=dynamic_keyword_count)
+    keywords = extract_keywords(cleaned_text, top_n=dynamic_keyword_count)
     
     # 9. Calculate metrics
-    orig_words = len(text.split())
+    orig_words = len(cleaned_text.split())
     summary_words = len(summary.split())
     compression_ratio = int((1 - summary_words / orig_words) * 100) if orig_words > 0 else 0
     
@@ -433,7 +504,8 @@ def summarize_document(
         "highlights": highlights,
         "keywords": keywords,
         "sentenceScores": sentence_scores,
-        "metrics": metrics
+        "metrics": metrics,
+        "originalText": cleaned_text
     }
     
     return result

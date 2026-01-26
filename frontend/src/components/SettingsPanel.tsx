@@ -64,7 +64,7 @@ export function SettingsPanel({ settings, onUpdate }: SettingsPanelProps) {
               }
               className={`p-4 rounded-xl border-2 transition-all text-left ${
                 settings.speedMode === mode.id
-                  ? 'border-blue-500 bg-blue-50 dark:bg-gray-900'
+                  ? 'border-blue-500 bg-blue-50 dark:bg-gray-800'
                   : 'border-gray-200 dark:border-gray-800 hover:border-gray-300 dark:hover:border-gray-600'
               }`}
             >
@@ -129,7 +129,7 @@ export function SettingsPanel({ settings, onUpdate }: SettingsPanelProps) {
                 }
                 className={`p-4 rounded-xl border-2 transition-all text-left ${
                   settings.domain === domain.id
-                    ? 'border-purple-500 bg-purple-50 dark:bg-gray-900'
+                    ? 'border-purple-500 bg-purple-50 dark:bg-gray-800'
                     : 'border-gray-200 dark:border-gray-800 hover:border-gray-300 dark:hover:border-gray-600'
                 }`}
               >
@@ -160,26 +160,33 @@ export function SettingsPanel({ settings, onUpdate }: SettingsPanelProps) {
             </p>
           </div>
 
-          <button
-            onClick={() =>
-              onUpdate({ ...settings, useAbstractive: !settings.useAbstractive })
-            }
-            className={`ml-4 relative inline-flex h-8 w-14 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 ${
-              settings.useAbstractive
-                ? 'bg-gradient-to-r from-blue-500 to-purple-500 dark:bg-gray-800'
-                : 'bg-gray-300 dark:bg-gray-600'
-            }`}
-          >
-            <span
-              className={`pointer-events-none inline-block h-7 w-7 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out ${
-                settings.useAbstractive ? 'translate-x-6' : 'translate-x-0'
-              }`}
-            />
-          </button>
+          {settings.useAbstractive ? (
+            <button
+              onClick={() => onUpdate({ ...settings, useAbstractive: false })}
+              className="ml-4 relative inline-flex h-8 w-14 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 bg-gradient-to-r from-blue-500 to-purple-500 dark:bg-gray-800"
+              role="switch"
+              aria-checked="true"
+              aria-label="Toggle abstractive summarization"
+              title="Toggle abstractive summarization"
+            >
+              <span className="pointer-events-none inline-block h-7 w-7 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out translate-x-6" />
+            </button>
+          ) : (
+            <button
+              onClick={() => onUpdate({ ...settings, useAbstractive: true })}
+              className="ml-4 relative inline-flex h-8 w-14 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 bg-gray-300 dark:bg-gray-600"
+              role="switch"
+              aria-checked="false"
+              aria-label="Toggle abstractive summarization"
+              title="Toggle abstractive summarization"
+            >
+              <span className="pointer-events-none inline-block h-7 w-7 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out translate-x-0" />
+            </button>
+          )}
         </div>
 
         {settings.useAbstractive && (
-          <div className="mt-4 p-4 bg-blue-50 dark:bg-gray-900 border border-blue-200 dark:border-gray-800 rounded-xl">
+          <div className="mt-4 p-4 bg-blue-50 dark:bg-gray-800 border border-blue-200 dark:border-gray-800 rounded-xl">
             <p className="text-sm text-blue-700 dark:text-gray-300">
               ✨ Abstractive mode enabled. Summaries will be more concise and natural-sounding,
               but may take slightly longer to process.

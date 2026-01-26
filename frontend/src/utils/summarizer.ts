@@ -110,6 +110,83 @@ function cosineSimilarity(vec1: number[], vec2: number[]): number {
   return dotProduct / (Math.sqrt(norm1) * Math.sqrt(norm2));
 }
 
+function cleanExtractedText(text: string): string {
+  if (!text) return '';
+
+  // Normalize whitespace first.
+  const normalized = text
+    .replace(/\u00a0/g, ' ')
+    .replace(/\r\n/g, '\n')
+    .replace(/[\t ]+\n/g, '\n');
+
+  const rawLines = normalized
+    .split('\n')
+    .map(l => l.trim())
+    .filter(Boolean);
+
+  const fingerprint = (line: string) =>
+    line
+      .toLowerCase()
+      .replace(/https?:\/\/\S+/g, ' ')
+      .replace(/\b\d+\b/g, ' ')
+      .replace(/[^a-z0-9\s]/g, ' ')
+      .replace(/\s+/g, ' ')
+      .trim();
+
+  const counts = new Map<string, number>();
+  const lineKeys: string[] = [];
+  for (const line of rawLines) {
+    const key = fingerprint(line);
+    lineKeys.push(key);
+    if (!key) continue;
+    counts.set(key, (counts.get(key) || 0) + 1);
+  }
+
+  const isLikelyHeaderFooter = (line: string, key: string, count: number) => {
+    const lower = line.toLowerCase();
+
+    // Very frequently repeated short-ish lines are almost always headers/footers.
+    if (count >= 3 && key.length < 90) return true;
+
+    // DOI / journal / boilerplate patterns (especially when repeated).
+    const boilerplateHit =
+      /\bhttps?:\/\/doi\b|\bdoi\b|discover oncology|springer|open access|copyright|©|received:|accepted:|issn\b|vol\.?\b|table\s+\d+|figure\s+\d+/i.test(
+        lower
+      );
+    if (boilerplateHit && (count >= 2 || key.length < 140)) return true;
+
+    // Page-number-like / digit-heavy artifacts.
+    if (/^\(?\d{8,}\)?$/.test(line.replace(/\s+/g, ''))) return true;
+
+    // Lines that are mostly punctuation/digits after cleaning.
+    const alphaCount = (lower.match(/[a-z]/g) || []).length;
+    if (alphaCount === 0 && line.length < 80) return true;
+
+    return false;
+  };
+
+  const cleanedLines: string[] = [];
+  let lastKey = '';
+  for (let i = 0; i < rawLines.length; i++) {
+    const line = rawLines[i];
+    const key = lineKeys[i] || '';
+    const count = key ? counts.get(key) || 0 : 0;
+
+    if (!key) continue;
+    if (isLikelyHeaderFooter(line, key, count)) continue;
+    if (key === lastKey) continue; // collapse consecutive duplicates
+
+    cleanedLines.push(line);
+    lastKey = key;
+  }
+
+  return cleanedLines
+    .join('\n')
+    .replace(/\n{3,}/g, '\n\n')
+    .replace(/[ ]{2,}/g, ' ')
+    .trim();
+}
+
 // Sentence Tokenization
 function tokenizeSentences(text: string): string[] {
   return text
@@ -268,6 +345,16 @@ function extractiveSummarize(
   } else if (settings.speedMode === 'thorough') {
     numSentences = Math.ceil(sentences.length * 0.5); // 50% for thorough
   }
+
+  // Hard cap: avoid generating unreadably large summaries for long documents.
+  // (The ratio-based rule can explode to hundreds of sentences for PDFs.)
+  const hardCap =
+    settings.speedMode === 'fast'
+      ? 12
+      : settings.speedMode === 'thorough'
+      ? 45
+      : 24;
+  numSentences = Math.min(numSentences, hardCap);
   
   // Ensure minimum and maximum bounds
   numSentences = Math.max(3, Math.min(numSentences, sentences.length));
@@ -312,8 +399,10 @@ export async function processDocument(
 ): Promise<Omit<SummarizationResult, 'fileName' | 'timestamp' | 'settings'>> {
   const startTime = performance.now();
 
+  const cleanedText = cleanExtractedText(text);
+
   // Tokenize sentences
-  const sentences = tokenizeSentences(text);
+  const sentences = tokenizeSentences(cleanedText);
   
   if (sentences.length === 0) {
     throw new Error('No valid sentences found in document');
@@ -321,12 +410,12 @@ export async function processDocument(
 
   // Extract keywords - dynamic based on document complexity
   // More diverse documents need more keywords to capture breadth
-  const uniqueWords = new Set(text.toLowerCase().match(/\b\w{4,}\b/g) || []).size;
+  const uniqueWords = new Set(cleanedText.toLowerCase().match(/\b\w{4,}\b/g) || []).size;
   const documentComplexity = Math.min(1.0, uniqueWords / 1000); // 0-1 scale
   const baseKeywords = Math.max(8, Math.min(50, Math.ceil(sentences.length / 3))); // 1 keyword per 3 sentences
   const dynamicKeywordCount = Math.ceil(baseKeywords * (0.7 + documentComplexity * 0.6)); // Scale by complexity
   
-  const keywords = extractKeywords(text, dynamicKeywordCount);
+  const keywords = extractKeywords(cleanedText, dynamicKeywordCount);
 
   // Perform extractive summarization
   const { scores, topIndices } = extractiveSummarize(sentences, settings);
@@ -393,6 +482,6 @@ export async function processDocument(
       summarySentences: summarySentences.length,
       processingTime: Math.round(endTime - startTime)
     },
-    originalText: text
+    originalText: cleanedText
   };
 }

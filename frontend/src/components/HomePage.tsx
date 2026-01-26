@@ -425,7 +425,7 @@ export function HomePage({ onGetStarted, darkMode, onToggleTheme }: HomePageProp
               </p>
               <button
                 onClick={onGetStarted}
-                className="px-8 py-4 bg-white text-blue-600 rounded-xl hover:shadow-2xl transition-all text-lg inline-flex items-center gap-2"
+                className="px-8 py-4 bg-white/90 dark:bg-gray-900 text-blue-600 dark:text-white rounded-xl hover:shadow-2xl transition-all text-lg inline-flex items-center gap-2"
               >
                 Get Started Now
                 <ArrowRight className="w-5 h-5" />

@@ -96,6 +96,35 @@ The backend provides optional enhanced features like:
    - http://localhost:8000
    - API docs: http://localhost:8000/docs
 
+## 🚀 Deploy Backend to Render
+
+This repo includes a Render Blueprint at [render.yaml](render.yaml) to deploy the FastAPI backend.
+
+- Create a new Render service → **Blueprint** → select this repo.
+- Render will deploy the backend from the `backend/` directory and use `/health` for health checks.
+
+Optional environment variables (set in Render → Environment):
+
+```env
+OPENAI_API_KEY=...your key...
+OPENAI_MODEL=gpt-4o-mini
+
+HUGGINGFACE_API_TOKEN=...your token...
+HUGGINGFACE_MODEL=HuggingFaceH4/zephyr-7b-beta
+```
+
+If your frontend is on Vercel and you want to restrict cross-origin calls, set:
+
+```env
+CORS_ORIGINS=https://your-vercel-app.vercel.app,http://localhost:5173
+```
+
+Notes:
+- The backend does not rely on cookies/session credentials, so CORS credentials are disabled by default.
+
+Notes:
+- The backend dependencies include heavy NLP/ML libraries (e.g. `torch`, `transformers`). First deploy can take a while.
+
 ## 📡 API Endpoints (Backend)
 
 | Method | Endpoint | Description |
@@ -134,8 +163,23 @@ The backend provides optional enhanced features like:
 
 ## 🔧 Configuration
 
+Security note:
+- Never paste or commit API keys into source code, issues, or chat logs.
+- Use environment variables (or a local `.env` file) instead. See `.env.example`.
+- If a key was exposed, revoke/rotate it immediately in your provider dashboard.
+
 ### Frontend Environment
 No environment variables needed - runs standalone.
+
+Optional (if you deploy the FastAPI backend and want the frontend to use it):
+
+```env
+VITE_BACKEND_URL=https://your-render-service.onrender.com
+```
+
+This makes the frontend call the backend for:
+- `POST /api/summarize`
+- `POST /api/chat`
 
 ### ChatGPT-like Chat (Recommended)
 

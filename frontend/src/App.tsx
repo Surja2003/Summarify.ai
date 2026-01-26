@@ -14,6 +14,7 @@ import { ProcessingLoader } from './components/ProcessingLoader';
 import { FloatingChatbot } from './components/FloatingChatbot';
 import { Moon, Sun, Sparkles, Home, LogOut, User as UserIcon, Menu, Upload } from 'lucide-react';
 import { SummarizationResult, HistoryItem, Settings as SettingsType, User, DocumentResult } from './types';
+import { buildApiUrl, getBackendBaseUrl } from './utils/api';
 
 export default function App() {
   const [darkMode, setDarkMode] = useState(false);
@@ -73,7 +74,28 @@ export default function App() {
       'Complete!'
     ];
 
-    const { processDocument } = await import('./utils/summarizer');
+    const backendBaseUrl = getBackendBaseUrl();
+    const useBackend = Boolean(backendBaseUrl);
+
+    const summarizeViaBackend = async (text: string, fileName: string) => {
+      const response = await fetch(buildApiUrl('/api/summarize'), {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          text,
+          settings,
+          fileName
+        })
+      });
+
+      if (!response.ok) {
+        throw new Error(`Backend summarize error: ${response.status}`);
+      }
+
+      return (await response.json()) as SummarizationResult;
+    };
+
+    const { processDocument } = useBackend ? { processDocument: undefined } : await import('./utils/summarizer');
     
     for (let i = 0; i < steps.length; i++) {
       setProcessingStep(i);
@@ -83,7 +105,9 @@ export default function App() {
     if (summaryMode === 'merged') {
       // Merge all documents into one
       const combinedText = files.map(f => `=== ${f.fileName} ===\n\n${f.text}`).join('\n\n');
-      const summaryResult = await processDocument(combinedText, settings);
+      const summaryResult = useBackend
+        ? await summarizeViaBackend(combinedText, `${files.length} Documents (Merged)`)
+        : await (processDocument as any)(combinedText, settings);
       
       const finalResult: SummarizationResult = {
         ...summaryResult,
@@ -110,7 +134,9 @@ export default function App() {
       const documentResults: DocumentResult[] = [];
       
       for (const file of files) {
-        const summaryResult = await processDocument(file.text, settings);
+        const summaryResult = useBackend
+          ? await summarizeViaBackend(file.text, file.fileName)
+          : await (processDocument as any)(file.text, settings);
         documentResults.push({
           id: file.id,
           fileName: file.fileName,
